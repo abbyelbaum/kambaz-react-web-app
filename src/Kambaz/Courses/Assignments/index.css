@@ -1,0 +1,14 @@
+.wd-rounded-corners-all-around {
+    border-radius: 50px;
+}
+.wd-border-thin {
+    border-width: 2px; }
+    
+.wd-border-solid {
+   border-style: solid; }
+
+.wd-assignment-link {
+  color: black !important;  /* Make the text black */
+  text-decoration: none !important;  /* Remove the underline */
+  font-weight: normal;  /* Ensure normal weight */
+}
