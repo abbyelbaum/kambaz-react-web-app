@@ -26,9 +26,9 @@ export default function Modules() {
               <BsGripVertical className="me-2 fs-3"/>Week 2<ModuleControlButtons/></div>
             <ListGroup className="wd-lessons rounded-0">
               <ListGroup.Item className="wd-lesson p-3 ps-1">
-                <BsGripVertical className="me-2 fs-3"/>LESSON 1<LessonControlButtons/></ListGroup.Item>
+                <BsGripVertical className="me-2 fs-3"/>Embedding content with Iframes<LessonControlButtons/></ListGroup.Item>
               <ListGroup.Item className="wd-lesson p-3 ps-1">
-                <BsGripVertical className="me-2 fs-3"/>LESSON 2<LessonControlButtons/></ListGroup.Item>
+                <BsGripVertical className="me-2 fs-3"/>Drawing with Scalable vector Graphics<LessonControlButtons/></ListGroup.Item>
             </ListGroup>
           </ListGroup.Item>
         </ListGroup>
