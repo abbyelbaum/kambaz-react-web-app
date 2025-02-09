@@ -21,6 +21,7 @@ import JsonStringify from "./JsonStringify";
 import House from "./House";
 import TodoItem from "./todos/TodoItem";
 import TodoList from "./todos/TodoList";
+import Spreading from "./Spreading";
 
 export default function Lab3() {
     return (
@@ -49,6 +50,7 @@ export default function Lab3() {
             <House/>
             <TodoItem/><hr/>
             <TodoList/>
+            <Spreading/>
         </div>
     );
 }
