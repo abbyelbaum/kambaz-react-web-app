@@ -26,7 +26,7 @@ export default function Lab3() {
             <IfElse/>
             <TernaryOperator/>
             <ConditionalOutputIfElse/>
-            <ConditionalOutputInline/>
+            <ConditionalOutputInline/><hr/>
             <LegacyFunctions/>
             <ArrowFunctions/>
             <ImpliedReturn/>
