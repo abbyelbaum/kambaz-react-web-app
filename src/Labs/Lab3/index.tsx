@@ -29,6 +29,7 @@ import Classes from "./Classes";
 import Styles from "./Styles";
 import Square from "./Square";
 import Highlight from "./Highlight";
+import PathParameters from "./PathParameters";
 
 export default function Lab3() {
     return (
@@ -71,7 +72,9 @@ export default function Lab3() {
             <Highlight>
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Suscipitratione eaque illo minus cum, saepe totam
                 vel nihil repellat nemo explicabo excepturi consectetur. Modi omnis minus sequi maiores, provident voluptates.
-            </Highlight>
+            </Highlight><hr/>
+
+            <PathParameters/>
         </div>
     );
 }
