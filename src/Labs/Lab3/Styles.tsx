@@ -12,7 +12,7 @@ export default function Styles() {
                     Yellow background
                 </div>
             <div style={bgRed}>Red background</div>
-            <div style={bgBlue}>Blue background</div>
+            <div style={bgBlue}>Blue background</div> <hr/>
         </div>
     );
 }
