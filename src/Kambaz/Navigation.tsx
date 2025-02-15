@@ -2,7 +2,7 @@ import { ListGroup } from "react-bootstrap";
 import { AiOutlineDashboard } from "react-icons/ai";
 import { FaInbox } from "react-icons/fa6";
 import { FaRegCircleUser } from "react-icons/fa6";
-import { IoCalendarOutline, IoSettingsOutline } from "react-icons/io5";
+import { IoCalendarOutline } from "react-icons/io5";
 import { LiaBookSolid, LiaCogSolid } from "react-icons/lia";
 import { Link, useLocation } from "react-router-dom";
 
