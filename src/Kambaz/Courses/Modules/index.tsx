@@ -8,7 +8,7 @@ import * as db from "../../Database"
 
 export default function Modules() {
   const {cid} = useParams();
-  const modules = db.modules
+  const modules = db.modules;
     return (
       <div>
         <ModulesControls /><br /><br /><br /><br />
