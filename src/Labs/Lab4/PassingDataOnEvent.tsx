@@ -9,6 +9,7 @@ export default function PassingDataOnEvent() {
             id="wd-pass-data-click">
                 Pass 2 and 3 to add()
             </button>
+            <hr/>
         </div>
     );
 }
