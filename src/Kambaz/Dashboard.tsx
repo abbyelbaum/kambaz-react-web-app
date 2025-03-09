@@ -4,31 +4,14 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 //import { v4 as uuidv4 } from "uuid";
 
-export default function Dashboard() {
-  const [courses, setCourses] = useState<any[]>(db.courses);
-  const [course, setCourse] = useState<any>({
-    _id: "0", name: "New Course", number: "New Number",
-    startDate: "2023-09-10", endDate: "2023-12-15",
-    image: "public/images/reactjs.webp", description: "New Description"
-  });
-  const addNewCourse = () => {
-    const newCourse = { ...course, _id: Date.now };
-    setCourses([...courses, newCourse ]);
-  };
-  const deleteCourse = (courseId: string) => {
-    setCourses(courses.filter((course) => course._id !== courseId));
-  };
-  const updateCourse = () => {
-    setCourses(
-      courses.map((c) => {
-        if(c._id === course._id) {
-          return course;
-        } else {
-          return c;
-        }
-      })
-    )
-  };
+export default function Dashboard( { courses, course, setCourse, addNewCourse,
+  deleteCourse, updateCourse }: {
+    courses: any[]; 
+    course: any; 
+    setCourse: (course: any) => void;
+    addNewCourse: () => void; 
+    deleteCourse: (course: any) => void;
+    updateCourse: () => void; }) {
   return (
     <div id="wd-dashboard">
       <h1 id="wd-dashboard-title">Dashboard</h1> <hr />
