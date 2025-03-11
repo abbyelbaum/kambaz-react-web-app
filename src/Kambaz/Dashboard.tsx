@@ -2,6 +2,8 @@ import { Button, Card, Col, FormControl, Row } from "react-bootstrap";
 import * as db from "./Database"
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { useSelector } from "react-redux";
+import ProtectedFacultyRoute from "./ProtectedFacultyRoute";
 //import { v4 as uuidv4 } from "uuid";
 
 export default function Dashboard( { courses, course, setCourse, addNewCourse,
@@ -12,9 +14,12 @@ export default function Dashboard( { courses, course, setCourse, addNewCourse,
     addNewCourse: () => void; 
     deleteCourse: (course: any) => void;
     updateCourse: () => void; }) {
+  const {currentUser} = useSelector((state: any) => state.accountReducer);
+  const {enrollments } = db
   return (
     <div id="wd-dashboard">
       <h1 id="wd-dashboard-title">Dashboard</h1> <hr />
+      <ProtectedFacultyRoute>
       <h5>New Course
         <button className="btn btn-primary float-end"
           id="wd-add-new-course-click"
@@ -28,11 +33,17 @@ export default function Dashboard( { courses, course, setCourse, addNewCourse,
         onChange={(e) => setCourse({ ...course, name: e.target.value }) } />
       <FormControl as="textarea" value={course.description} rows={3} 
         onChange={(e) => setCourse({ ...course, description: e.target.value }) } />
-      <hr />
+      <hr /></ProtectedFacultyRoute>
       <h2 id="wd-dashboard-published">Published Courses (12)</h2> <hr />
       <div id="wd-dashboard-courses">
         <Row xs={1} md={5} className="g-4">
-          {courses.map((course) => (
+          {courses.filter((course) =>
+          enrollments.some(
+            (enrollment) => 
+              enrollment.user === currentUser._id &&
+            enrollment.course === course._id
+          ))
+          .map((course) => (
             <Col className="wd-dashboard-course" style={{width: "300px"}}>
               <Card>
                 <Link to={`/Kambaz/Courses/${course._id}/Home`}
@@ -43,6 +54,7 @@ export default function Dashboard( { courses, course, setCourse, addNewCourse,
                     <Card.Text className="wd-dashboard-course-description overflow-hidden" style={{height: "100px"}}>
                       {course.description}</Card.Text>
                     <Button variant="primary">Go</Button>
+                    <ProtectedFacultyRoute>
                     <button onClick={(event) => {
                       event.preventDefault();
                       deleteCourse(course._id);
@@ -56,6 +68,7 @@ export default function Dashboard( { courses, course, setCourse, addNewCourse,
                       className="btn btn-warning me-2 float-end" >
                       Edit
                     </button>
+                    </ProtectedFacultyRoute>
                   </Card.Body>
                 </Link>
               </Card>

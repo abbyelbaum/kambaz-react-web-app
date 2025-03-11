@@ -7,10 +7,13 @@ import AssignmentModuleControlButtons from "./AssignmentModuleControlButtons";
 import AssignmentStartButtons from "./AssignmentStartButtons"
 import { useParams } from "react-router";
 import * as db from "../../Database"
+import ProtectedFacultyRoute from "../../ProtectedFacultyRoute";
+import { useSelector } from "react-redux";
 
 export default function Assignments() {
   const {cid} = useParams();
   const assignments = db.assignments
+  const { currentUser } = useSelector((state: any) => state.accountReducer)
     return (
       <div id="wd-assignments">
         <div className="d-flex align-items-center mb-3">
@@ -21,6 +24,7 @@ export default function Assignments() {
             <FormControl type="text" id="wd-search-assignment" placeholder="Search..."/>
           </InputGroup>
         
+        <ProtectedFacultyRoute>
           <div className="ms-auto">
           <Button variant="danger" size="sm" className="me-2" id="wd-add-assignment-btn">
             <FaPlus className="me-1" /> Assignment
@@ -29,6 +33,7 @@ export default function Assignments() {
             <FaPlus className="me-1" /> Group
           </Button>
         </div>
+        </ProtectedFacultyRoute>
       </div>
 
         <ListGroup className="rounded-0" id="wd-assignments">
@@ -42,9 +47,12 @@ export default function Assignments() {
                   <ListGroup className="wd-lessons rounded-0">
                     <ListGroup.Item className="wd-lesson p-3 ps-1">
                       <AssignmentStartButtons/>
+                      <ProtectedFacultyRoute>
                       <a href={`#/Kambaz/Courses/${cid}/Assignments/${assignment._id}`} className="wd-assignment-link">
                         {assignment.title}
-                      </a><br />
+                      </a></ProtectedFacultyRoute>
+                      {currentUser?.role !== "FACULTY" && <span>{assignment.title}</span>}
+                      <br />
                       <span className="text-danger small">Multiple Modules</span> | 
                       <span className="fw-bold small"> Not available until</span> <span className="small">May 6 at 12:00am</span>
                       <br />

@@ -8,6 +8,7 @@ import * as db from "../../Database"
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addModule, editModule, updateModule, deleteModule } from "./reducer";
+import ProtectedFacultyRoute from "../../ProtectedFacultyRoute";
 
 export default function Modules() {
   const {cid} = useParams();
@@ -16,11 +17,13 @@ export default function Modules() {
   const dispatch = useDispatch();
     return (
       <div>
+        <ProtectedFacultyRoute>
         <ModulesControls moduleName={moduleName} setModuleName={setModuleName}
           addModule={() => {
           dispatch(addModule({ name: moduleName, course: cid }));
           setModuleName("");
           }} />
+          </ProtectedFacultyRoute>
         <br /><br /><br /><br />
         <ListGroup id="wd-modules" className="rounded-0">
         {modules

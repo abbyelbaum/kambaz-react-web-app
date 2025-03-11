@@ -3,6 +3,7 @@ import GreenCheckmark from "./GreenCheckmark";
 import { IoEllipsisVertical } from "react-icons/io5";
 import { FaTrash } from "react-icons/fa";
 import { FaPencil } from "react-icons/fa6";
+import ProtectedFacultyRoute from "../../ProtectedFacultyRoute";
 
 export default function ModuleControlButtons(
     {moduleId, deleteModule, editModule}: {
@@ -13,8 +14,10 @@ export default function ModuleControlButtons(
 ) {
     return(
         <div className="float-end">
-            <FaPencil className="text-primary me-3" onClick={() => editModule(moduleId)} />
-            <FaTrash className="text-danger me-2 mb-1" onClick={() => deleteModule(moduleId)} />
+            <ProtectedFacultyRoute>
+                <FaPencil className="text-primary me-3" onClick={() => editModule(moduleId)} />
+                <FaTrash className="text-danger me-2 mb-1" onClick={() => deleteModule(moduleId)} />
+            </ProtectedFacultyRoute>
             <GreenCheckmark/>
             <BsPlus className="fs-2"/>
             <IoEllipsisVertical className="fs-4"/>
