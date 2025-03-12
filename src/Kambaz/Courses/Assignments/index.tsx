@@ -5,16 +5,23 @@ import { FaPlus } from "react-icons/fa";
 import AssignmentControlButtons from "./AssignmentControlButtons";
 import AssignmentModuleControlButtons from "./AssignmentModuleControlButtons";
 import AssignmentStartButtons from "./AssignmentStartButtons"
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import * as db from "../../Database"
 import ProtectedFacultyRoute from "../../ProtectedFacultyRoute";
-import { useSelector } from "react-redux";
+import {  useDispatch, useSelector } from "react-redux";
+import { deleteAssignment } from "./reducer";
 
 export default function Assignments() {
   const {cid} = useParams();
-  const assignments = db.assignments
-  const { currentUser } = useSelector((state: any) => state.accountReducer)
-    return (
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { assignments } = useSelector((state: any) => state.assignmentsReducer);
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
+  const formatDate = (dueDate: string) => new Date(dueDate).toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+  });
+  return (
       <div id="wd-assignments">
         <div className="d-flex align-items-center mb-3">
           <InputGroup className="w-50">
@@ -26,7 +33,8 @@ export default function Assignments() {
         
         <ProtectedFacultyRoute>
           <div className="ms-auto">
-          <Button variant="danger" size="sm" className="me-2" id="wd-add-assignment-btn">
+          <Button variant="danger" size="sm" className="me-2" id="wd-add-assignment-btn"
+            onClick={() => navigate(`/Kambaz/Courses/${cid}/Assignments/Editor`)}>
             <FaPlus className="me-1" /> Assignment
           </Button>
           <Button variant="secondary" size="sm" id="wd-add-group-btn">
@@ -54,10 +62,13 @@ export default function Assignments() {
                       {currentUser?.role !== "FACULTY" && <span>{assignment.title}</span>}
                       <br />
                       <span className="text-danger small">Multiple Modules</span> | 
-                      <span className="fw-bold small"> Not available until</span> <span className="small">May 6 at 12:00am</span>
+                      <span className="fw-bold small"> Not available until</span> <span className="small">{formatDate(assignment.availableFrom)} at 12:00am</span>
                       <br />
-                      <span className="fw-bold small">Due</span> <span className="small">May 13 at 11:59pm | 100</span>
-                      <AssignmentControlButtons/></ListGroup.Item>
+                      <span className="fw-bold small">Due</span> <span className="small">{formatDate(assignment.dueDate)} at 11:59pm | {assignment.points}</span>
+                      <AssignmentControlButtons assignmentId={assignment._id}
+                      deleteAssignment={(assignmentId) => {
+                        dispatch(deleteAssignment(assignmentId))
+                      }}/></ListGroup.Item>
                  </ListGroup>
                 )
               }

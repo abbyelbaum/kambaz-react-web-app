@@ -4,7 +4,6 @@ import { BsGripVertical } from "react-icons/bs";
 import ModuleControlButtons from "./ModuleControlButtons";
 import LessonControlButtons from "./LessonControlButtons";
 import { useParams } from "react-router";
-import * as db from "../../Database"
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addModule, editModule, updateModule, deleteModule } from "./reducer";
@@ -32,7 +31,6 @@ export default function Modules() {
           <ListGroup.Item className="wd-module p-0 mb-5 fs-5 border-gray">
             <div className="wd-title p-3 ps-2 bg-secondary">
               <BsGripVertical className="me-2 fs-3" /> {module.name} 
-              {!module.editing && module.name}
               { module.editing && (
               <FormControl className="w-50 d-inline-block"
               onChange={(e) => dispatch(updateModule({ ...module, name: e.target.value }))}

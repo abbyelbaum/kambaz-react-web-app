@@ -7,6 +7,7 @@ import "./styles.css";
 import { useState } from "react";
 import * as db from "./Database"
 import ProtectedRotue from "./Account/ProtectedRoute";
+import { v4 as uuidv4 } from "uuid";
 
 export default function Kambaz() {
     const [courses, setCourses] = useState<any[]>(db.courses);
@@ -16,7 +17,7 @@ export default function Kambaz() {
       image: "public/images/reactjs.webp", description: "New Description"
     });
     const addNewCourse = () => {
-        const newCourse = {...course, _id: Date.now };
+        const newCourse = {...course, _id: uuidv4() };
         setCourses([...courses, newCourse ]);
     };
     const deleteCourse = (courseId: string) => {
