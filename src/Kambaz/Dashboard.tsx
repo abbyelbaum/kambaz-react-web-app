@@ -1,10 +1,11 @@
 import { Button, Card, Col, FormControl, Row } from "react-bootstrap";
 import * as db from "./Database"
-import { Link } from "react-router-dom";
-import { useState } from "react";
-import { useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import ProtectedFacultyRoute from "./ProtectedFacultyRoute";
-//import { v4 as uuidv4 } from "uuid";
+import ProtectedStudentRoute from "./ProtectedStudentRoute";
+import { enrollCourse, unenrollCourse } from "./reducer"
 
 export default function Dashboard( { courses, course, setCourse, addNewCourse,
   deleteCourse, updateCourse }: {
@@ -15,7 +16,36 @@ export default function Dashboard( { courses, course, setCourse, addNewCourse,
     deleteCourse: (course: any) => void;
     updateCourse: () => void; }) {
   const {currentUser} = useSelector((state: any) => state.accountReducer);
-  const {enrollments } = db
+  const [showAllCourses, setShowAllCourses] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+
+  // useEffect(() => {
+  //   if (currentUser?.role === "STUDENT") {
+  //     dispatch(setEnrolledCourses(currentUser._id));
+  //   }
+  // }, [dispatch, currentUser]);
+  
+  const enrolledCourses = useSelector((state: any) => state.enrollmentsReducer.enrolledCourses) ?? [];
+  
+  console.log("Updated enrolledCourses:", enrolledCourses); // Debugging output
+  
+
+  const handleEnroll = (courseId: string) => {
+    dispatch(enrollCourse({ userId: currentUser._id, courseId }));
+  };
+
+  const handleUnenroll = (courseId: string) => {
+      dispatch(unenrollCourse({ userId: currentUser._id, courseId }));
+  };
+    
+  const filteredCourses = showAllCourses ? courses : courses.filter((course) =>
+      enrolledCourses.some(
+        (enrollment: any) =>
+          enrollment.user === currentUser._id && enrollment.course === course._id
+      )
+    );
   return (
     <div id="wd-dashboard">
       <h1 id="wd-dashboard-title">Dashboard</h1> <hr />
@@ -33,27 +63,59 @@ export default function Dashboard( { courses, course, setCourse, addNewCourse,
         onChange={(e) => setCourse({ ...course, name: e.target.value }) } />
       <FormControl as="textarea" value={course.description} rows={3} 
         onChange={(e) => setCourse({ ...course, description: e.target.value }) } />
-      <hr /></ProtectedFacultyRoute>
-      <h2 id="wd-dashboard-published">Published Courses (12)</h2> <hr />
+        <hr />
+      </ProtectedFacultyRoute>
+
+      <ProtectedStudentRoute>
+        <Button
+            variant="primary"
+            className="float-end mb-3"
+            onClick={() => setShowAllCourses(!showAllCourses)}>
+            {showAllCourses ? "Show My Enrolled Courses" : "Show All Courses"}
+          </Button>
+      </ProtectedStudentRoute>
+
+      
+      <h1 id="wd-dashboard-published">Published Courses ({courses.length})</h1><hr />
       <div id="wd-dashboard-courses">
         <Row xs={1} md={5} className="g-4">
-          {courses.filter((course) =>
-          enrollments.some(
-            (enrollment) => 
-              enrollment.user === currentUser._id &&
-            enrollment.course === course._id
-          ))
-          .map((course) => (
+          {filteredCourses.map((course) => (
             <Col className="wd-dashboard-course" style={{width: "300px"}}>
               <Card>
-                <Link to={`/Kambaz/Courses/${course._id}/Home`}
-                      className="wd-dashboard-course-link text-decoration-none text-dark" >
-                  <Card.Img variant="top" src="/images/reactjs.webp" width="100%" height={160} />
+                {enrolledCourses.some(
+                                    (e: any) => e.user === currentUser._id && e.course === course._id) ? (
+                    <Link to={`/Kambaz/Courses/${course._id}/Home`}
+                          className="wd-dashboard-course-link text-decoration-none text-dark">
+                      <Card.Img variant="top" src="/images/reactjs.webp" width="100%" height={160} />
+                    </Link>
+                  ) : (
+                    <Card.Img variant="top" src="/images/reactjs.webp" width="100%" height={160} style={{ filter: "grayscale(100%)" }} />
+                  )}
                   <Card.Body>
                     <Card.Title className="wd-dashbaord-course-title text-nowrap overflow-hidden">{course.name}</Card.Title>
                     <Card.Text className="wd-dashboard-course-description overflow-hidden" style={{height: "100px"}}>
                       {course.description}</Card.Text>
-                    <Button variant="primary">Go</Button>
+                      <Button variant="primary" onClick={() => navigate(`/Kambaz/Courses/${course._id}/Home`)} disabled={!enrolledCourses.some(
+                                    (e: any) => e.user === currentUser._id && e.course === course._id)}>Go</Button>
+                      <ProtectedStudentRoute>
+                      {currentUser && (
+                        <Button
+                            variant={
+                                enrolledCourses.some(
+                                    (e: any) => e.user === currentUser._id && e.course === course._id) ? "danger" : "success" }
+                            className="float-end"
+                            onClick={(event) => {
+                                event.preventDefault();
+                                enrolledCourses.some(
+                                    (e: any) => e.user === currentUser._id 
+                                    && e.course === course._id) ? handleUnenroll(course._id) : handleEnroll(course._id); }}>
+                            {enrolledCourses.some(
+                                (e: any) => e.user === currentUser._id 
+                                && e.course === course._id) ? "Unenroll" : "Enroll"}
+                        </Button>
+                    )}
+
+                    </ProtectedStudentRoute>
                     <ProtectedFacultyRoute>
                     <button onClick={(event) => {
                       event.preventDefault();
@@ -70,7 +132,6 @@ export default function Dashboard( { courses, course, setCourse, addNewCourse,
                     </button>
                     </ProtectedFacultyRoute>
                   </Card.Body>
-                </Link>
               </Card>
             </Col>
           ))}
