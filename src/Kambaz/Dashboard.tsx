@@ -63,7 +63,7 @@ export default function Dashboard( { courses, course, setCourse, addNewCourse,
       </ProtectedStudentRoute>
 
       
-      <h1 id="wd-dashboard-published">Published Courses ({courses.length})</h1><hr />
+      <h1 id="wd-dashboard-published">Published Courses ({filteredCourses.length})</h1><hr />
       <div id="wd-dashboard-courses">
         <Row xs={1} md={5} className="g-4">
           {filteredCourses.map((course) => (

@@ -8,8 +8,13 @@ import { useState } from "react";
 import * as db from "./Database"
 import ProtectedRotue from "./Account/ProtectedRoute";
 import { v4 as uuidv4 } from "uuid";
+import { useDispatch, useSelector } from "react-redux";
+import { enrollCourse } from "./reducer";
+
 
 export default function Kambaz() {
+    const dispatch = useDispatch();
+    const { currentUser } = useSelector((state: any) => state.accountReducer);
     const [courses, setCourses] = useState<any[]>(db.courses);
     const [course, setCourse] = useState<any>({
       _id: "0", name: "New Course", number: "New Number",
@@ -17,9 +22,13 @@ export default function Kambaz() {
       image: "public/images/reactjs.webp", description: "New Description"
     });
     const addNewCourse = () => {
-        const newCourse = {...course, _id: uuidv4() };
-        setCourses([...courses, newCourse ]);
-    };
+      const newCourse = { ...course, _id: uuidv4() };
+      setCourses([...courses, newCourse]);
+      
+      if (currentUser) {
+          dispatch(enrollCourse({ userId: currentUser._id, courseId: newCourse._id }));
+      }
+  };
     const deleteCourse = (courseId: string) => {
       setCourses(courses.filter((course) => course._id !== courseId));
     };
