@@ -1,11 +1,10 @@
-import { Col, Form, FormSelect, Row, Card, Button } from "react-bootstrap";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { Col, Form, Row, Card, Button } from "react-bootstrap";
+import { useNavigate, useParams } from "react-router-dom";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addAssignment, updateAssignment } from "./reducer";
 
 export default function AssignmentEditor() {
-    const { pathname } = useLocation();
     const{ cid, aid } = useParams();
     const navigate = useNavigate();
     const dispatch = useDispatch();

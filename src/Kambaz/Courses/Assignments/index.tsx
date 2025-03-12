@@ -6,7 +6,6 @@ import AssignmentControlButtons from "./AssignmentControlButtons";
 import AssignmentModuleControlButtons from "./AssignmentModuleControlButtons";
 import AssignmentStartButtons from "./AssignmentStartButtons"
 import { useNavigate, useParams } from "react-router";
-import * as db from "../../Database"
 import ProtectedFacultyRoute from "../../ProtectedFacultyRoute";
 import {  useDispatch, useSelector } from "react-redux";
 import { deleteAssignment } from "./reducer";
