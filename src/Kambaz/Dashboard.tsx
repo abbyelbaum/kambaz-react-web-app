@@ -1,7 +1,6 @@
 import { Button, Card, Col, FormControl, Row } from "react-bootstrap";
-import * as db from "./Database"
 import { Link, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ProtectedFacultyRoute from "./ProtectedFacultyRoute";
 import ProtectedStudentRoute from "./ProtectedStudentRoute";
