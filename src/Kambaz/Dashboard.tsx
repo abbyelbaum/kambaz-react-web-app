@@ -19,33 +19,21 @@ export default function Dashboard( { courses, course, setCourse, addNewCourse,
   const [showAllCourses, setShowAllCourses] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const enrolledCourses = useSelector((state: any) => state.enrollmentsReducer.enrolledCourses) ?? [];  
 
-
-  // useEffect(() => {
-  //   if (currentUser?.role === "STUDENT") {
-  //     dispatch(setEnrolledCourses(currentUser._id));
-  //   }
-  // }, [dispatch, currentUser]);
-  
-  const enrolledCourses = useSelector((state: any) => state.enrollmentsReducer.enrolledCourses) ?? [];
-  
-  console.log("Updated enrolledCourses:", enrolledCourses); // Debugging output
-  
-
-  const handleEnroll = (courseId: string) => {
-    dispatch(enrollCourse({ userId: currentUser._id, courseId }));
+  const handleEnroll = (cid: string) => {
+    dispatch(enrollCourse({ userId: currentUser._id, courseId: cid }));
   };
 
-  const handleUnenroll = (courseId: string) => {
-      dispatch(unenrollCourse({ userId: currentUser._id, courseId }));
+  const handleUnenroll = (cid: string) => {
+      dispatch(unenrollCourse({ userId: currentUser._id, courseId: cid }));
   };
     
   const filteredCourses = showAllCourses ? courses : courses.filter((course) =>
       enrolledCourses.some(
         (enrollment: any) =>
-          enrollment.user === currentUser._id && enrollment.course === course._id
-      )
-    );
+          enrollment.course === course._id && enrollment.user === currentUser._id));
+
   return (
     <div id="wd-dashboard">
       <h1 id="wd-dashboard-title">Dashboard</h1> <hr />
@@ -81,13 +69,13 @@ export default function Dashboard( { courses, course, setCourse, addNewCourse,
         <Row xs={1} md={5} className="g-4">
           {filteredCourses.map((course) => (
             <Col className="wd-dashboard-course" style={{width: "300px"}}>
-              <Card>
+              <Card onClick={() => { if ( enrolledCourses.some((e: any) => e.user === currentUser._id && e.course === course._id)) {
+                navigate(`/Kambaz/Courses/${course._id}/Home`); }}}
+            style={{ cursor: enrolledCourses.some(
+                (e: any) => e.user === currentUser._id && e.course === course._id) ? "pointer" : "default" }}>
                 {enrolledCourses.some(
                                     (e: any) => e.user === currentUser._id && e.course === course._id) ? (
-                    <Link to={`/Kambaz/Courses/${course._id}/Home`}
-                          className="wd-dashboard-course-link text-decoration-none text-dark">
                       <Card.Img variant="top" src="/images/reactjs.webp" width="100%" height={160} />
-                    </Link>
                   ) : (
                     <Card.Img variant="top" src="/images/reactjs.webp" width="100%" height={160} style={{ filter: "grayscale(100%)" }} />
                   )}

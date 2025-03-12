@@ -11,17 +11,17 @@ const enrollmentSlice = createSlice({
   name: "enrollment",
   initialState,
   reducers: {
-    enrollCourse: (state, { payload: { userId, courseId } }) => {
-        state.enrolledCourses.push({ _id: uuidv4(), user: userId, course: courseId });
-      },
-      unenrollCourse: (state, { payload: { userId, courseId } }) => {
-        state.enrolledCourses = state.enrolledCourses.filter(
-          (enrollment) =>
-            !(enrollment.user === userId && enrollment.course === courseId)
-        );
-      },
-      
-  },
+    enrollCourse: (state, { payload }) => {
+      const { userId, courseId } = payload;
+      state.enrolledCourses.push({ _id: uuidv4(), user: userId, course: courseId });
+    },
+    unenrollCourse: (state, { payload }) => {
+      const { userId, courseId } = payload;
+      state.enrolledCourses = state.enrolledCourses.filter(
+        (enrollment) => enrollment.user !== userId || enrollment.course !== courseId
+      );
+    },
+  },  
 });
 
 export const { enrollCourse, unenrollCourse } = enrollmentSlice.actions;
