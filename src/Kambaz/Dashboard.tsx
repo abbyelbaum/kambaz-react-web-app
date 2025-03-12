@@ -1,6 +1,7 @@
 import { Button, Card, Col, FormControl, Row } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import * as db from "./Database"
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ProtectedFacultyRoute from "./ProtectedFacultyRoute";
 import ProtectedStudentRoute from "./ProtectedStudentRoute";
@@ -68,13 +69,13 @@ export default function Dashboard( { courses, course, setCourse, addNewCourse,
         <Row xs={1} md={5} className="g-4">
           {filteredCourses.map((course) => (
             <Col className="wd-dashboard-course" style={{width: "300px"}}>
-              <Card onClick={() => { if ( enrolledCourses.some((e: any) => e.user === currentUser._id && e.course === course._id)) {
-                navigate(`/Kambaz/Courses/${course._id}/Home`); }}}
-            style={{ cursor: enrolledCourses.some(
-                (e: any) => e.user === currentUser._id && e.course === course._id) ? "pointer" : "default" }}>
+              <Card>
                 {enrolledCourses.some(
                                     (e: any) => e.user === currentUser._id && e.course === course._id) ? (
+                    <Link to={`/Kambaz/Courses/${course._id}/Home`}
+                          className="wd-dashboard-course-link text-decoration-none text-dark">
                       <Card.Img variant="top" src="/images/reactjs.webp" width="100%" height={160} />
+                    </Link>
                   ) : (
                     <Card.Img variant="top" src="/images/reactjs.webp" width="100%" height={160} style={{ filter: "grayscale(100%)" }} />
                   )}
