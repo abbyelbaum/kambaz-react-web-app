@@ -4,25 +4,36 @@ import Dashboard from "./Dashboard";
 import KambazNavigation from "./Navigation";
 import Courses from "./Courses";
 import "./styles.css";
-import { useState } from "react";
-import * as db from "./Database"
+import { useEffect, useState } from "react";
 import ProtectedRotue from "./Account/ProtectedRoute";
-import { v4 as uuidv4 } from "uuid";
 import { useDispatch, useSelector } from "react-redux";
 import { enrollCourse } from "./reducer";
+import Session from "./Account/Session";
+import * as userClient from "./Account/client";
 
 
 export default function Kambaz() {
     const dispatch = useDispatch();
+    const [courses, setCourses] = useState<any[]>([]);
     const { currentUser } = useSelector((state: any) => state.accountReducer);
-    const [courses, setCourses] = useState<any[]>(db.courses);
+    const fetchCourses = async () => {
+      try {
+        const courses = await userClient.findMyCourses();
+        setCourses(courses);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    useEffect(() => {
+      fetchCourses();
+    }, [currentUser]);  
     const [course, setCourse] = useState<any>({
       _id: "0", name: "New Course", number: "New Number",
       startDate: "2023-09-10", endDate: "2023-12-15",
       image: "public/images/reactjs.webp", description: "New Description"
     });
-    const addNewCourse = () => {
-      const newCourse = { ...course, _id: uuidv4() };
+    const addNewCourse = async () => {
+      const newCourse = await userClient.createCourse(course);
       setCourses([...courses, newCourse]);
       
       if (currentUser) {
@@ -44,6 +55,7 @@ export default function Kambaz() {
       )
     };  
     return (
+      <Session>
         <div id="wd-kambaz">
             <KambazNavigation/>
             <div className="wd-main-content-offset p3">
@@ -68,5 +80,6 @@ export default function Kambaz() {
                 </div>
             </div>
         </div>
+      </Session>
     );
 }
