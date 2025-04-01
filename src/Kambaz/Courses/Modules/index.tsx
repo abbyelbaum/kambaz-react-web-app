@@ -8,15 +8,21 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addModule, editModule, updateModule, deleteModule, setModules } from "./reducer";
 import ProtectedFacultyRoute from "../../ProtectedFacultyRoute";
-import * as courseClient from "../client";
+import * as coursesClient from "../client";
 
 export default function Modules() {
   const {cid} = useParams();
   const [moduleName, setModuleName] = useState("");
   const { modules } = useSelector((state: any) => state.modulesReducer);
   const dispatch = useDispatch();
+  const createModuleForCourse = async () => {
+    if (!cid) return;
+    const newModule = { name: moduleName, course: cid };
+    const module = await coursesClient.createModuleForCourse(cid, newModule);
+    dispatch(addModule(module));
+  };
   const fetchModules = async () => {
-    const modules = await courseClient.findModulesForCourse(cid as string);
+    const modules = await coursesClient.findModulesForCourse(cid as string);
     dispatch(setModules(modules));
   };
   useEffect(() => {
@@ -25,12 +31,8 @@ export default function Modules() {
     return (
       <div>
         <ProtectedFacultyRoute>
-        <ModulesControls moduleName={moduleName} setModuleName={setModuleName}
-          addModule={() => {
-          dispatch(addModule({ name: moduleName, course: cid }));
-          setModuleName("");
-          }} />
-          </ProtectedFacultyRoute>
+        <ModulesControls setModuleName={setModuleName} moduleName={moduleName} addModule={createModuleForCourse} />
+        </ProtectedFacultyRoute>
         <br /><br /><br /><br />
         <ListGroup id="wd-modules" className="rounded-0">
         {modules
