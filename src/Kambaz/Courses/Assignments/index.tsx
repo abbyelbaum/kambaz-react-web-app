@@ -8,12 +8,21 @@ import AssignmentStartButtons from "./AssignmentStartButtons"
 import { useNavigate, useParams } from "react-router";
 import ProtectedFacultyRoute from "../../ProtectedFacultyRoute";
 import {  useDispatch, useSelector } from "react-redux";
-import { deleteAssignment } from "./reducer";
+import { deleteAssignment, setAssignments } from "./reducer";
+import * as coursesClient from "../client"
+import { useEffect } from "react";
 
 export default function Assignments() {
   const {cid} = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const fetchAssignemnts = async () => {
+    const assignments = await coursesClient.findAssignmentsForCourse(cid as string);
+    dispatch(setAssignments(assignments));
+  };
+  useEffect(() => {
+    fetchAssignemnts();
+  });
   const { assignments } = useSelector((state: any) => state.assignmentsReducer);
   const { currentUser } = useSelector((state: any) => state.accountReducer);
   const formatDate = (dueDate: string) => new Date(dueDate).toLocaleDateString("en-US", {
@@ -49,8 +58,7 @@ export default function Assignments() {
               <BsGripVertical className="me-2 fs-3"/> ASSIGNMENTS 
               <AssignmentModuleControlButtons/></div>
 
-              {assignments.filter((assignment: any) => assignment.course === cid)
-                .map((assignment: any) =>
+              {assignments.map((assignment: any) =>
                   <ListGroup className="wd-lessons rounded-0">
                     <ListGroup.Item className="wd-lesson p-3 ps-1">
                       <AssignmentStartButtons/>
