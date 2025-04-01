@@ -16,6 +16,10 @@ export default function Modules() {
   const [moduleName, setModuleName] = useState("");
   const { modules } = useSelector((state: any) => state.modulesReducer);
   const dispatch = useDispatch();
+  const saveModule = async (module: any) => {
+    await modulesClient.updateModule(module);
+    dispatch(updateModule(module));
+  };
   const removeModule = async (moduleId: string) => {
     await modulesClient.deleteModule(moduleId);
     dispatch(deleteModule(moduleId));
@@ -49,9 +53,7 @@ export default function Modules() {
               <FormControl className="w-50 d-inline-block"
               onChange={(e) => dispatch(updateModule({ ...module, name: e.target.value }))}
               onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                dispatch(updateModule({ ...module, editing: false }));
-              }
+              if (e.key === "Enter") {saveModule({...module, editing: false})};
               }}
               defaultValue={module.name}/>
               )}
