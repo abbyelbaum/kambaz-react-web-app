@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { enrollCourse } from "./reducer";
 import Session from "./Account/Session";
 import * as userClient from "./Account/client";
+import * as courseClient from "./Courses/client"
 
 
 export default function Kambaz() {
@@ -40,7 +41,8 @@ export default function Kambaz() {
           dispatch(enrollCourse({ userId: currentUser._id, courseId: newCourse._id }));
       }
   };
-    const deleteCourse = (courseId: string) => {
+    const deleteCourse = async (courseId: string) => {
+      const status = await courseClient.deleteCourse(courseId);
       setCourses(courses.filter((course) => course._id !== courseId));
     };
     const updateCourse = () => {
