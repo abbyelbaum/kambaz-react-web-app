@@ -3,6 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addAssignment, updateAssignment } from "./reducer";
+import * as coursesClient from "../client";
+import * as assignmentsClient from "./client";
 
 export default function AssignmentEditor() {
     const{ cid, aid } = useParams();
@@ -25,12 +27,13 @@ export default function AssignmentEditor() {
         setNewAssignment({ ...newAssignment, [e.target.id]: e.target.value });
       };
 
-      const handleSave = () => {
+      const handleSave = async () => {
         if (existingAssignment) {
-          dispatch(updateAssignment(newAssignment));
-          console.log(newAssignment);
+            const assignment = await assignmentsClient.updateAssignment(newAssignment);
+            dispatch(updateAssignment(assignment));
         } else {
-          dispatch(addAssignment(newAssignment));
+            const assignment = await coursesClient.createAssignmentForCourse(cid!, newAssignment);
+            dispatch(addAssignment(assignment));
         }
         navigate(`/Kambaz/Courses/${cid}/Assignments`);
       };

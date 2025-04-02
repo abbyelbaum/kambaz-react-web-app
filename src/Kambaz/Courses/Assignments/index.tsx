@@ -9,13 +9,18 @@ import { useNavigate, useParams } from "react-router";
 import ProtectedFacultyRoute from "../../ProtectedFacultyRoute";
 import {  useDispatch, useSelector } from "react-redux";
 import { deleteAssignment, setAssignments } from "./reducer";
-import * as coursesClient from "../client"
+import * as coursesClient from "../client";
+import * as assignmentsClient from "./client";
 import { useEffect } from "react";
 
 export default function Assignments() {
   const {cid} = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const removeAssignment = async (assignmentId: string) => {
+    await assignmentsClient.deleteAssignment(assignmentId);
+    dispatch(deleteAssignment(assignmentId));
+  }
   const fetchAssignemnts = async () => {
     const assignments = await coursesClient.findAssignmentsForCourse(cid as string);
     dispatch(setAssignments(assignments));
@@ -73,9 +78,8 @@ export default function Assignments() {
                       <br />
                       <span className="fw-bold small">Due</span> <span className="small">{formatDate(assignment.dueDate)} at 11:59pm | {assignment.points}</span>
                       <AssignmentControlButtons assignmentId={assignment._id}
-                      deleteAssignment={(assignmentId) => {
-                        dispatch(deleteAssignment(assignmentId))
-                      }}/></ListGroup.Item>
+                      deleteAssignment={(assignmentId) => removeAssignment(assignmentId)}/>
+                    </ListGroup.Item>
                  </ListGroup>
                 )
               }
