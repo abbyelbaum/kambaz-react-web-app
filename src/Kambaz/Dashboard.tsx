@@ -1,32 +1,40 @@
 import { Button, Card, Col, FormControl, Row } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import ProtectedFacultyRoute from "./ProtectedFacultyRoute";
 import ProtectedStudentRoute from "./ProtectedStudentRoute";
-import { enrollCourse, unenrollCourse } from "./reducer"
+//import { enrollCourse, unenrollCourse } from "./reducer"
 
 export default function Dashboard( { courses, course, setCourse, addNewCourse,
-  deleteCourse, updateCourse }: {
+  deleteCourse, updateCourse, enroll, unenroll, allCourses }: {
     courses: any[]; 
     course: any; 
     setCourse: (course: any) => void;
     addNewCourse: () => void; 
     deleteCourse: (course: any) => void;
-    updateCourse: () => void; }) {
+    updateCourse: () => void; 
+    enroll: (courseId: string) => void;
+    unenroll: (courseId: string) => void;
+    allCourses: any[]}) {
   const {currentUser} = useSelector((state: any) => state.accountReducer);
   const [showAllCourses, setShowAllCourses] = useState(false);
-  const dispatch = useDispatch();
+  //const dispatch = useDispatch();
   const navigate = useNavigate();
   const enrolledCourses = useSelector((state: any) => state.enrollmentsReducer.enrolledCourses) ?? [];  
-
   const handleEnroll = (cid: string) => {
-    dispatch(enrollCourse({ userId: currentUser._id, courseId: cid }));
+    enroll(cid);
   };
 
   const handleUnenroll = (cid: string) => {
-      dispatch(unenrollCourse({ userId: currentUser._id, courseId: cid }));
+    unenroll(cid);
   };
+
+  const filteredCourses = showAllCourses
+    ? allCourses
+    : courses
+      ;
+
     
   return (
     <div id="wd-dashboard">
@@ -61,7 +69,7 @@ export default function Dashboard( { courses, course, setCourse, addNewCourse,
       <h1 id="wd-dashboard-published">Published Courses ({courses.length})</h1><hr />
       <div id="wd-dashboard-courses">
         <Row xs={1} md={5} className="g-4">
-          {courses.map((course) => (
+          {filteredCourses.map((course) => (
             <Col className="wd-dashboard-course" style={{width: "300px"}}>
               <Card>
                 {enrolledCourses.some(

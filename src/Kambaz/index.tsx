@@ -11,22 +11,38 @@ import { enrollCourse } from "./reducer";
 import Session from "./Account/Session";
 import * as userClient from "./Account/client";
 import * as courseClient from "./Courses/client"
+import * as enrollmentClient from "./Enrollments/client"
 
 
 export default function Kambaz() {
     const dispatch = useDispatch();
     const [courses, setCourses] = useState<any[]>([]);
+    const [allCourses, setAllCourses] = useState<any[]>([]);
     const { currentUser } = useSelector((state: any) => state.accountReducer);
     const fetchCourses = async () => {
-      try {
-        const courses = await userClient.findMyCourses();
-        setCourses(courses);
-      } catch (error) {
-        console.error(error);
+      if (currentUser) {
+        const enrolledCourses = await enrollmentClient.fetchUserEnrollments();
+        setCourses(enrolledCourses);
       }
+    };
+    const fetchAllCourses = async () => {
+      const courses = await courseClient.fetchAllCourses();
+      setAllCourses(courses);
+    }
+    const enroll = async (courseId: string) => {
+      await enrollmentClient.enrollInCourse(courseId);
+      fetchCourses();
+      fetchAllCourses();
+    };
+  
+    const unenroll = async (courseId: string) => {
+      await enrollmentClient.unenrollFromCourse(courseId);
+      fetchCourses();
+      fetchAllCourses();
     };
     useEffect(() => {
       fetchCourses();
+      fetchAllCourses();
     }, [currentUser]);  
     const [course, setCourse] = useState<any>({
       _id: "0", name: "New Course", number: "New Number",
@@ -42,7 +58,7 @@ export default function Kambaz() {
       }
   };
     const deleteCourse = async (courseId: string) => {
-      const status = await courseClient.deleteCourse(courseId);
+      //const status = await courseClient.deleteCourse(courseId);
       setCourses(courses.filter((course) => course._id !== courseId));
     };
     const updateCourse = async () => {
@@ -75,7 +91,10 @@ export default function Kambaz() {
                                 setCourse={setCourse}
                                 addNewCourse={addNewCourse}
                                 deleteCourse={deleteCourse}
-                                updateCourse={updateCourse} /> </ProtectedRotue>} />
+                                updateCourse={updateCourse} 
+                                enroll={enroll}
+                                unenroll={unenroll}
+                                allCourses={allCourses}/> </ProtectedRotue>} />
                         <Route path="Courses/:cid/*" element={<ProtectedRotue><Courses courses={courses} /> </ProtectedRotue>} />
                         <Route path="/Calendar" element={<h1>Calendar</h1>} />
                         <Route path="/Inbox" element={<h1>Inbox</h1>} />
