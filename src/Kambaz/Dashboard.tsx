@@ -34,6 +34,7 @@ export default function Dashboard( { courses, course, setCourse, addNewCourse,
     ? allCourses
     : courses
       ;
+  //const isEnrolled = (cid: string)
 
     
   return (
