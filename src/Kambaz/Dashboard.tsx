@@ -97,7 +97,7 @@ export default function Dashboard( { courses, course, setCourse, addNewCourse,
                       <Card.Img variant="top" src="/images/reactjs.webp" width="100%" height={160} />
                     </Link>
                   ) : (
-                    <Card.Img variant="top" src="/images/reactjs.webp" width="100%" height={160} style={{ filter: "grayscale(100%)" }} />
+                    <Card.Img variant="top" src="/images/reactjs.webp" width="100%" height={160} />
                   )}
                   <Card.Body>
                     <Card.Title className="wd-dashbaord-course-title text-nowrap overflow-hidden">{course.name}</Card.Title>
