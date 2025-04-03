@@ -1,9 +1,10 @@
 import { Button, Card, Col, FormControl, Row } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import ProtectedFacultyRoute from "./ProtectedFacultyRoute";
 import ProtectedStudentRoute from "./ProtectedStudentRoute";
+import {fetchUserEnrollments} from "./Enrollments/client.ts"
 //import { enrollCourse, unenrollCourse } from "./reducer"
 
 export default function Dashboard( { courses, course, setCourse, addNewCourse,
@@ -21,21 +22,36 @@ export default function Dashboard( { courses, course, setCourse, addNewCourse,
   const [showAllCourses, setShowAllCourses] = useState(false);
   //const dispatch = useDispatch();
   const navigate = useNavigate();
-  const enrolledCourses = useSelector((state: any) => state.enrollmentsReducer.enrolledCourses) ?? [];  
-  const handleEnroll = (cid: string) => {
-    enroll(cid);
-  };
-
-  const handleUnenroll = (cid: string) => {
-    unenroll(cid);
-  };
+  const [enrolledCourses, setEnrolledCourses] = useState<any[]>([]);
 
   const filteredCourses = showAllCourses
     ? allCourses
     : courses
       ;
-  //const isEnrolled = (cid: string)
-
+      const fetchEnrollments = async () => {
+        try {
+          const data = await fetchUserEnrollments();
+          setEnrolledCourses(data);
+        } catch (error) {
+          console.error("Error fetching enrollments", error);
+        }
+      };
+      
+      // Fetch enrollments on mount
+      useEffect(() => {
+        fetchEnrollments();
+      }, []);
+      
+      const handleEnroll = async (cid: string) => {
+        await enroll(cid);
+        fetchEnrollments(); // Refresh the enrollments
+      };
+      
+      const handleUnenroll = async (cid: string) => {
+        await unenroll(cid);
+        fetchEnrollments(); // Refresh the enrollments
+      };
+      
     
   return (
     <div id="wd-dashboard">
@@ -73,8 +89,7 @@ export default function Dashboard( { courses, course, setCourse, addNewCourse,
           {filteredCourses.map((course) => (
             <Col className="wd-dashboard-course" style={{width: "300px"}}>
               <Card>
-                {enrolledCourses.some(
-                                    (e: any) => e.user === currentUser._id && e.course === course._id) ? (
+                {enrolledCourses.some((enrolledCourse: any) => enrolledCourse._id === course._id) ? (
                     <Link to={`/Kambaz/Courses/${course._id}/Home`}
                           className="wd-dashboard-course-link text-decoration-none text-dark">
                       <Card.Img variant="top" src="/images/reactjs.webp" width="100%" height={160} />
@@ -86,24 +101,29 @@ export default function Dashboard( { courses, course, setCourse, addNewCourse,
                     <Card.Title className="wd-dashbaord-course-title text-nowrap overflow-hidden">{course.name}</Card.Title>
                     <Card.Text className="wd-dashboard-course-description overflow-hidden" style={{height: "100px"}}>
                       {course.description}</Card.Text>
-                      <Button variant="primary" onClick={() => navigate(`/Kambaz/Courses/${course._id}/Home`)} disabled={!enrolledCourses.some(
-                                    (e: any) => e.user === currentUser._id && e.course === course._id)}>Go</Button>
+                      <Button
+                        variant="primary"
+                        onClick={() => navigate(`/Kambaz/Courses/${course._id}/Home`)}
+                        disabled={!enrolledCourses.some((enrolledCourse: any) => enrolledCourse._id === course._id)}
+                      >
+                        Go
+                      </Button>
+
                       <ProtectedStudentRoute>
                       {currentUser && (
                         <Button
-                            variant={
-                                enrolledCourses.some(
-                                    (e: any) => e.user === currentUser._id && e.course === course._id) ? "danger" : "success" }
-                            className="float-end"
-                            onClick={(event) => {
-                                event.preventDefault();
-                                enrolledCourses.some(
-                                    (e: any) => e.user === currentUser._id 
-                                    && e.course === course._id) ? handleUnenroll(course._id) : handleEnroll(course._id); }}>
-                            {enrolledCourses.some(
-                                (e: any) => e.user === currentUser._id 
-                                && e.course === course._id) ? "Unenroll" : "Enroll"}
-                        </Button>
+                        variant={enrolledCourses.some((enrolledCourse: any) => enrolledCourse._id === course._id) ? "danger" : "success"}
+                        className="float-end"
+                        onClick={(event) => {
+                          event.preventDefault();
+                          enrolledCourses.some((enrolledCourse: any) => enrolledCourse._id === course._id)
+                            ? handleUnenroll(course._id)
+                            : handleEnroll(course._id);
+                        }}
+                      >
+                        {enrolledCourses.some((enrolledCourse: any) => enrolledCourse._id === course._id) ? "Unenroll" : "Enroll"}
+                      </Button>
+                      
                     )}
 
                     </ProtectedStudentRoute>
