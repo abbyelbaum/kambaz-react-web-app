@@ -51,6 +51,8 @@ export default function Dashboard( { courses, course, setCourse, addNewCourse,
         await unenroll(cid);
         fetchEnrollments(); // Refresh the enrollments
       };
+
+      
       
     
   return (

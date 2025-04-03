@@ -55,6 +55,7 @@ export default function Kambaz() {
       
       if (currentUser) {
           dispatch(enrollCourse({ userId: currentUser._id, courseId: newCourse._id }));
+          fetchCourses();
       }
   };
     const deleteCourse = async (courseId: string) => {
