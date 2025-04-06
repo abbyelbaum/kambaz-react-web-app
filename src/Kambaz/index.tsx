@@ -20,11 +20,13 @@ export default function Kambaz() {
     const [allCourses, setAllCourses] = useState<any[]>([]);
     const { currentUser } = useSelector((state: any) => state.accountReducer);
     const fetchCourses = async () => {
-      if (currentUser) {
-        const enrolledCourses = await enrollmentClient.fetchUserEnrollments();
-        setCourses(enrolledCourses);
+      try {
+        const courses = await courseClient.fetchAllCourses();
+        setCourses(courses);
+      } catch (error) {
+        console.error(error);
       }
-    };
+    };   
     const fetchAllCourses = async () => {
       const courses = await courseClient.fetchAllCourses();
       setAllCourses(courses);
@@ -50,15 +52,9 @@ export default function Kambaz() {
       image: "public/images/reactjs.webp", description: "New Description"
     });
     const addNewCourse = async () => {
-      const newCourse = await userClient.createCourse(course);
+      const newCourse = await courseClient.createCourse(course);
       setCourses([...courses, newCourse]);
-      
-      if (currentUser) {
-          dispatch(enrollCourse({ userId: currentUser._id, courseId: newCourse._id }));
-      }
-
-      fetchCourses();
-      fetchAllCourses();
+   
   };
     const deleteCourse = async (courseId: string) => {
       await courseClient.deleteCourse(courseId);
