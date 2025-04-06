@@ -1,14 +1,15 @@
 import axios from "axios";
 
+const axiosWithCredentails = axios.create({withCredentials: true});
 const REMOTE_SERVER = import.meta.env.VITE_REMOTE_SERVER;
 const MODULES_API = `${REMOTE_SERVER}/api/modules`;
 
 export const deleteModule = async (moduleId: string) => {
-    const resposne = await axios.delete(`${MODULES_API}/${moduleId}`);
+    const resposne = await axiosWithCredentails.delete(`${MODULES_API}/${moduleId}`);
     return resposne.data;
 };
 
 export const updateModule = async (module: any) => {
-    const {data} = await axios.put(`${MODULES_API}/${module._id}`, module);
+    const {data} = await axiosWithCredentails.put(`${MODULES_API}/${module._id}`, module);
     return data;
 }
