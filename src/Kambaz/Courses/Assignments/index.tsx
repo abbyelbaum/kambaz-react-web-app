@@ -22,12 +22,12 @@ export default function Assignments() {
     dispatch(deleteAssignment(assignmentId));
   }
   const fetchAssignemnts = async () => {
-    const assignments = await coursesClient.findAssignmentsForCourse(cid as string);
+    const assignments = await coursesClient.findAssignmentsForCourse(cid!);
     dispatch(setAssignments(assignments));
   };
   useEffect(() => {
     fetchAssignemnts();
-  });
+  }, [cid]);
   const { assignments } = useSelector((state: any) => state.assignmentsReducer);
   const { currentUser } = useSelector((state: any) => state.accountReducer);
   const formatDate = (dueDate: string) => new Date(dueDate).toLocaleDateString("en-US", {
