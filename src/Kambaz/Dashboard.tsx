@@ -8,7 +8,8 @@ import {fetchUserEnrollments} from "./Enrollments/client.ts"
 //import { enrollCourse, unenrollCourse } from "./reducer"
 
 export default function Dashboard( { courses, course, setCourse, addNewCourse,
-  deleteCourse, updateCourse, enroll, unenroll, allCourses }: {
+  deleteCourse, updateCourse, enroll, unenroll, allCourses, enrolling, setEnrolling,
+  updateEnrollment }: {
     courses: any[]; 
     course: any; 
     setCourse: (course: any) => void;
@@ -17,40 +18,43 @@ export default function Dashboard( { courses, course, setCourse, addNewCourse,
     updateCourse: () => void; 
     enroll: (courseId: string) => void;
     unenroll: (courseId: string) => void;
-    allCourses: any[]}) {
+    allCourses: any[];
+    enrolling: boolean;
+    setEnrolling: (enrolling: boolean) => void;
+    updateEnrollment: (courseId: string, enrolled: boolean) => void;}) {
   const {currentUser} = useSelector((state: any) => state.accountReducer);
   const [showAllCourses, setShowAllCourses] = useState(false);
   //const dispatch = useDispatch();
   const navigate = useNavigate();
   const [enrolledCourses, setEnrolledCourses] = useState<any[]>([]);
 
-  const filteredCourses = showAllCourses
-    ? allCourses
-    : courses
-      ;
-      const fetchEnrollments = async () => {
-        try {
-          const data = await fetchUserEnrollments();
-          setEnrolledCourses(data);
-        } catch (error) {
-          console.error("Error fetching enrollments", error);
-        }
-      };
+  // const filteredCourses = showAllCourses
+  //   ? allCourses
+  //   : courses
+  //     ;
+  //     const fetchEnrollments = async () => {
+  //       try {
+  //         const data = await fetchUserEnrollments();
+  //         setEnrolledCourses(data);
+  //       } catch (error) {
+  //         console.error("Error fetching enrollments", error);
+  //       }
+  //     };
       
-      // Fetch enrollments on mount
-      useEffect(() => {
-        fetchEnrollments();
-      }, []);
+      // // Fetch enrollments on mount
+      // useEffect(() => {
+      //   fetchEnrollments();
+      // }, []);
       
-      const handleEnroll = async (cid: string) => {
-        await enroll(cid);
-        fetchEnrollments(); // Refresh the enrollments
-      };
+      // const handleEnroll = async (cid: string) => {
+      //   await enroll(cid);
+      //   fetchEnrollments(); // Refresh the enrollments
+      // };
       
-      const handleUnenroll = async (cid: string) => {
-        await unenroll(cid);
-        fetchEnrollments(); // Refresh the enrollments
-      };
+      // const handleUnenroll = async (cid: string) => {
+      //   await unenroll(cid);
+      //   fetchEnrollments(); // Refresh the enrollments
+      // };
 
       
       
@@ -79,8 +83,8 @@ export default function Dashboard( { courses, course, setCourse, addNewCourse,
         <Button
             variant="primary"
             className="float-end mb-3"
-            onClick={() => setShowAllCourses(!showAllCourses)}>
-            {showAllCourses ? "Show My Enrolled Courses" : "Show All Courses"}
+            onClick={() => setEnrolling(!enrolling)}>
+            {enrolling ? "My Courses" : "All Courses"}
           </Button>
       </ProtectedStudentRoute>
 
@@ -88,7 +92,7 @@ export default function Dashboard( { courses, course, setCourse, addNewCourse,
       <h1 id="wd-dashboard-published">Published Courses ({courses.length})</h1><hr />
       <div id="wd-dashboard-courses">
         <Row xs={1} md={5} className="g-4">
-          {filteredCourses.map((course) => (
+          {courses.map((course) => (
             <Col className="wd-dashboard-course" style={{width: "300px"}}>
               <Card>
                 {enrolledCourses.some((enrolledCourse: any) => enrolledCourse._id === course._id) ? (
@@ -100,32 +104,26 @@ export default function Dashboard( { courses, course, setCourse, addNewCourse,
                     <Card.Img variant="top" src="/images/reactjs.webp" width="100%" height={160} />
                   )}
                   <Card.Body>
-                    <Card.Title className="wd-dashbaord-course-title text-nowrap overflow-hidden">{course.name}</Card.Title>
+                    <Card.Title className="wd-dashboard-course-title text-nowrap overflow-hidden">{course.name}</Card.Title>
                     <Card.Text className="wd-dashboard-course-description overflow-hidden" style={{height: "100px"}}>
                       {course.description}</Card.Text>
                       <Button
                         variant="primary"
                         onClick={() => navigate(`/Kambaz/Courses/${course._id}/Home`)}
-                        disabled={!enrolledCourses.some((enrolledCourse: any) => enrolledCourse._id === course._id)}
+                        disabled={enrolling}
                       >
                         Go
                       </Button>
 
                       <ProtectedStudentRoute>
-                      {currentUser && (
-                        <Button
-                        variant={enrolledCourses.some((enrolledCourse: any) => enrolledCourse._id === course._id) ? "danger" : "success"}
-                        className="float-end"
-                        onClick={(event) => {
+                      {enrolling && (
+                         <button className={`btn ${ course.enrolled ? "btn-danger" : "btn-success" } float-end`} 
+                         onClick={(event) => {
                           event.preventDefault();
-                          enrolledCourses.some((enrolledCourse: any) => enrolledCourse._id === course._id)
-                            ? handleUnenroll(course._id)
-                            : handleEnroll(course._id);
-                        }}
-                      >
-                        {enrolledCourses.some((enrolledCourse: any) => enrolledCourse._id === course._id) ? "Unenroll" : "Enroll"}
-                      </Button>
-                      
+                          updateEnrollment(course._id, !course.enrolled);
+                        }}>
+                         {course.enrolled ? "Unenroll" : "Enroll"}
+                       </button>
                     )}
 
                     </ProtectedStudentRoute>
